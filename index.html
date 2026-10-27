@@ -28,6 +28,37 @@ const now=new Date();now.setHours(0,0,0,0);let view=new Date(now.getFullYear(),n
 const pad=n=>String(n).padStart(2,'0');
 function render(){document.getElementById('month').textContent=`${view.getFullYear()}年 ${view.getMonth()+1}月`;const days=document.getElementById('days');days.replaceChildren();const offset=(view.getDay()+6)%7;for(let i=0;i<offset;i++)days.appendChild(document.createElement('span'));const count=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();for(let d=1;d<=count;d++){const date=new Date(view.getFullYear(),view.getMonth(),d);const key=`${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(d)}`;const b=document.createElement('button');b.className='day'+(key===selected?' selected':'');b.disabled=date<now;b.innerHTML=`<span>${d}</span><small>・</small>`;b.addEventListener('click',()=>{selected=key;document.getElementById('selectedTitle').textContent=`${date.getMonth()+1}月${d}日の空き時間`;document.getElementById('slots').textContent='現在、この日の空き枠は公開されていません。';render()});days.appendChild(b)}document.getElementById('prev').disabled=view.getFullYear()===now.getFullYear()&&view.getMonth()===now.getMonth()}
 document.getElementById('prev').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);render()});document.getElementById('next').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);render()});render();
+  
+async function loadMenus() {
+  const select = document.getElementById('menu');
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/salon_menus?select=menu_name,price_yen,duration_minutes&is_active=eq.true&order=display_order.asc`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY
+        }
+      }
+    );
+    if (!response.ok) throw new Error('取得失敗');
+    const menus = await response.json();
+
+    select.innerHTML = '<option value="">メニューを選択してください</option>';
+
+    menus.forEach(menu => {
+      const option = document.createElement('option');
+      option.value = menu.menu_name;
+      option.textContent = `${menu.menu_name}｜${menu.price_yen.toLocaleString()}円`;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error(error);
+    select.innerHTML = '<option value="">メニューを読み込めませんでした</option>';
+  }
+}
+
+loadMenus();
+
 </script>
 </body>
 </html>
