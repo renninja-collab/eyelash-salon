@@ -22,8 +22,8 @@ main{max-width:520px;margin:auto;padding:32px 18px 65px}.eyebrow{text-align:cent
 </main>
 <script>
 
-  const SUPABASE_URL = 'https://jpiyjtwdnqgfjdvmvxgq.supabase.co;
-const SUPABASE_KEY = 'sb_publishable_0WJdc3bQYjImcdamMrF4aw_T-bOzFAk;
+  const SUPABASE_URL = 'https://jpiyjtwdnqgfjdvmvxgq.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_0WJdc3bQYjImcdamMrF4aw_T-bOzFAk';
 const now=new Date();now.setHours(0,0,0,0);let view=new Date(now.getFullYear(),now.getMonth(),1);let selected=null;
 const pad=n=>String(n).padStart(2,'0');
 function render(){document.getElementById('month').textContent=`${view.getFullYear()}年 ${view.getMonth()+1}月`;const days=document.getElementById('days');days.replaceChildren();const offset=(view.getDay()+6)%7;for(let i=0;i<offset;i++)days.appendChild(document.createElement('span'));const count=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();for(let d=1;d<=count;d++){const date=new Date(view.getFullYear(),view.getMonth(),d);const key=`${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(d)}`;const b=document.createElement('button');b.className='day'+(key===selected?' selected':'');b.disabled=date<now;b.innerHTML=`<span>${d}</span><small>・</small>`;b.addEventListener('click',()=>{selected=key;document.getElementById('selectedTitle').textContent=`${date.getMonth()+1}月${d}日の空き時間`;document.getElementById('slots').textContent='現在、この日の空き枠は公開されていません。';render()});days.appendChild(b)}document.getElementById('prev').disabled=view.getFullYear()===now.getFullYear()&&view.getMonth()===now.getMonth()}
