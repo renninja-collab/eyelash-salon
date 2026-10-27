@@ -33,7 +33,7 @@ async function loadMenus() {
   const select = document.getElementById('menu');
   try {
     const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/salon_menus?select=menu_name,price_yen,duration_minutes&is_active=eq.true&order=display_order.asc`,
+      `${SUPABASE_URL}/rest/v1/salon_menus?select=name,price_yen,duration_minutes&is_active=eq.true&order=display_order.asc`,
       {
         headers: {
           apikey: SUPABASE_KEY
@@ -47,8 +47,8 @@ async function loadMenus() {
 
     menus.forEach(menu => {
       const option = document.createElement('option');
-      option.value = menu.menu_name;
-      option.textContent = `${menu.menu_name}｜${menu.price_yen.toLocaleString()}円`;
+      option.value = menu.name;
+      option.textContent = `${menu.name}｜${menu.price_yen.toLocaleString()}円`;
       select.appendChild(option);
     });
   } catch (error) {
