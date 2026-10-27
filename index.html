@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>eyelash salon | 空き枠のご案内</title>
+<style>
+:root{--bg:#faf7f2;--paper:#fffdfa;--ink:#493b33;--muted:#8d7d72;--line:#e9e0d7;--accent:#9b7b68}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;line-height:1.65}
+main{max-width:520px;margin:auto;padding:32px 18px 65px}.eyebrow{text-align:center;font-family:Georgia,serif;letter-spacing:.25em;font-size:13px;color:var(--accent)}h1{text-align:center;font-family:Georgia,serif;font-weight:400;letter-spacing:.07em;font-size:34px;margin:8px 0 4px}.subtitle{text-align:center;color:var(--muted);font-size:12px;letter-spacing:.1em;margin-bottom:30px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:21px 18px;margin:16px 0;box-shadow:0 6px 24px #493b3308}h2{font-size:16px;font-weight:600;margin:0 0 14px}.note{font-size:12px;color:var(--muted);margin:8px 0 0}select{width:100%;padding:13px;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink);font-size:15px}.month{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.month strong{font-size:17px}.nav{border:1px solid var(--line);background:#fff;border-radius:9px;padding:5px 13px;font-size:21px;color:var(--ink);cursor:pointer}.week,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;text-align:center}.week{font-size:11px;color:var(--muted);margin-bottom:7px}.day{aspect-ratio:1/1;min-width:0;border:1px solid transparent;background:transparent;border-radius:9px;color:var(--ink);font-size:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}.day small{font-size:10px;line-height:1.2;color:#a99a90}.day.selected{background:#92715f;color:white}.day.selected small{color:white}.day:disabled{color:#c9beb6;cursor:default}.day:disabled small{color:#c9beb6}.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--muted);margin-top:14px}.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.slot{border:1px solid var(--line);border-radius:10px;padding:11px 4px;text-align:center;background:#f7f2ed;color:var(--muted);font-size:14px}.empty{text-align:center;color:var(--muted);font-size:13px;padding:20px 4px}.insta{display:block;text-align:center;text-decoration:none;background:var(--accent);color:white;border-radius:12px;padding:13px;margin-top:18px;font-size:14px}footer{text-align:center;color:var(--muted);font-size:11px;margin-top:25px}
+</style>
+</head>
+<body>
+<main>
+<div class="eyebrow">PRIVATE EYELASH SALON</div>
+<h1>eyelash salon</h1>
+<div class="subtitle">名古屋市港区小賀須 ｜ 空き状況のご案内</div>
+<section class="panel"><h2>メニューを選択</h2><select id="menu"><option>メニューを選択してください</option><option>フラットラッシュ</option><option>ダブルフラットラッシュ</option></select><p class="note">※メニュー・料金・施術時間は準備中です。</p></section>
+<section class="panel"><div class="month"><button class="nav" id="prev" aria-label="前の月">‹</button><strong id="month"></strong><button class="nav" id="next" aria-label="次の月">›</button></div><div class="week"><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span></div><div class="days" id="days"></div><div class="legend"><span>○ 空きあり</span><span>△ 残りわずか</span><span>× 満席</span><span>・ 未公開</span></div><p class="note">現在は準備中のため、空き枠は公開されていません。</p></section>
+<section class="panel"><h2 id="selectedTitle">日付を選択してください</h2><div id="slots" class="empty">日付を選ぶと、空き時間がここに表示されます。</div><a class="insta" href="https://www.instagram.com/fu_ka.eyelash.nagoya/" target="_blank" rel="noopener noreferrer">Instagramを見る</a></section>
+<footer>© eyelash salon</footer>
+</main>
+<script>
+const now=new Date();now.setHours(0,0,0,0);let view=new Date(now.getFullYear(),now.getMonth(),1);let selected=null;
+const pad=n=>String(n).padStart(2,'0');
+function render(){document.getElementById('month').textContent=`${view.getFullYear()}年 ${view.getMonth()+1}月`;const days=document.getElementById('days');days.replaceChildren();const offset=(view.getDay()+6)%7;for(let i=0;i<offset;i++)days.appendChild(document.createElement('span'));const count=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();for(let d=1;d<=count;d++){const date=new Date(view.getFullYear(),view.getMonth(),d);const key=`${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(d)}`;const b=document.createElement('button');b.className='day'+(key===selected?' selected':'');b.disabled=date<now;b.innerHTML=`<span>${d}</span><small>・</small>`;b.addEventListener('click',()=>{selected=key;document.getElementById('selectedTitle').textContent=`${date.getMonth()+1}月${d}日の空き時間`;document.getElementById('slots').textContent='現在、この日の空き枠は公開されていません。';render()});days.appendChild(b)}document.getElementById('prev').disabled=view.getFullYear()===now.getFullYear()&&view.getMonth()===now.getMonth()}
+document.getElementById('prev').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);render()});document.getElementById('next').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);render()});render();
+</script>
+</body>
+</html>
