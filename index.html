@@ -141,6 +141,14 @@ try {
     slots.textContent = '空き時間の読み込みに失敗しました。';
   }
 });
+
+const originalRender = render;
+
+render = function() {
+  originalRender();
+  loadOpenDays();
+};
+  
 </script>
 </body>
 </html>
