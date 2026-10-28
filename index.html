@@ -58,6 +58,32 @@ async function loadMenus() {
 }
 
 loadMenus();
+  async function loadOpenDays() {
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/salon_open_days?select=day,start_time,end_time,is_open&is_open=eq.true`,
+      { headers: { apikey: SUPABASE_KEY } }
+    );
+
+    if (!response.ok) throw new Error('営業日の取得に失敗');
+
+    const days = await response.json();
+    console.log('営業日データ:', days);
+
+    document.querySelectorAll('[data-date]').forEach(cell => {
+      const date = cell.dataset.date;
+      const openDay = days.find(d => d.day === date);
+
+      if (openDay) {
+        cell.textContent = `${Number(date.slice(-2))} ○`;
+      }
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+loadOpenDays();
 
 </script>
 </body>
