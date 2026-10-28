@@ -70,12 +70,12 @@ loadMenus();
     const days = await response.json();
     console.log('営業日データ:', days);
 
-    document.querySelectorAll('[data-date]').forEach(cell => {
-      const date = cell.dataset.date;
+    document.querySelectorAll('#days .day').forEach(cell => {
+      const date = `${view.getFullYear()}-${pad(view.getMonth()+1)}-${pad(cell.querySelector('span').textContent)}`;
       const openDay = days.find(d => d.day === date);
 
       if (openDay) {
-  cell.textContent = `${Number(date.slice(-2))} ○`;
+  cell.querySelector('small').textContent = '○';
   cell.style.color = '#493b33';
   cell.style.fontWeight = 'bold';
       }
