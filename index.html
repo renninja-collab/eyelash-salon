@@ -102,49 +102,38 @@ document.getElementById('days').addEventListener('click', async (event) => {
     return;
   }
 
-  try {
-    const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/salon_open_days?select=start_time,end_time&day=eq.${selected}&is_open=eq.true`,
-      { headers: { apikey: SUPABASE_KEY } }
-    );
-
-    if (!response.ok) throw new Error('営業時間の取得に失敗');
-
-    const days = await response.json();
-
-    if (days.length === 0) {
-      slots.textContent = 'この日は空き枠が公開されていません。';
-      return;
+  
+try {
+  const response = await fetch(
+    `${SUPABASE_URL}/rest/v1/rpc/salon_available_slots`,
+    {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        p_day: selected,
+        p_menu_name: document.getElementById('menu').value
+      })
     }
+  );
 
-    const day = days[0];
+  if (!response.ok) throw new Error('空き時間の取得に失敗');
 
-    const toMinutes = (time) => {
-      const [h, m] = time.split(':').map(Number);
-      return h * 60 + m;
-    };
+  const times = (await response.json()).map(item => item.slot_time);
 
-    const start = toMinutes(day.start_time);
-    const end = toMinutes(day.end_time);
-    const duration = 150; // テストメニューの施術時間
+  if (times.length === 0) {
+    slots.textContent = 'この日は予約できる時間帯がありません。';
+    return;
+  }
 
-    const times = [];
+  slots.className = 'slots';
+  slots.innerHTML =
+    '<div style="grid-column:1/-1;font-size:12px;color:#8d7d72">テスト表示：まだ予約は受け付けていません。</div>' +
+    times.map(time => `<div class="slot">${time}</div>`).join('');
 
-    for (let t = start; t + duration <= end; t += 30) {
-      const h = String(Math.floor(t / 60)).padStart(2, '0');
-      const m = String(t % 60).padStart(2, '0');
-      times.push(`${h}:${m}`);
-    }
 
-    if (times.length === 0) {
-      slots.textContent = 'この日は予約できる時間帯がありません。';
-      return;
-    }
-
-    slots.className = 'slots';
-    slots.innerHTML =
-      '<div style="grid-column:1/-1;font-size:12px;color:#8d7d72">テスト表示：まだ予約は受け付けていません。</div>' +
-      times.map(time => `<div class="slot">${time}</div>`).join('');
 
   } catch (error) {
     console.error(error);
