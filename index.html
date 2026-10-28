@@ -88,6 +88,70 @@ loadMenus();
 render();
 loadOpenDays();
 
+
+document.getElementById('days').addEventListener('click', async (event) => {
+  const button = event.target.closest('button.day');
+  if (!button || button.disabled || !selected) return;
+
+  const slots = document.getElementById('slots');
+  slots.className = 'empty';
+  slots.textContent = '空き時間を読み込み中...';
+
+  if (!document.getElementById('menu').value) {
+    slots.textContent = '先にメニューを選択してください。';
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/salon_open_days?select=start_time,end_time&day=eq.${selected}&is_open=eq.true`,
+      { headers: { apikey: SUPABASE_KEY } }
+    );
+
+    if (!response.ok) throw new Error('営業時間の取得に失敗');
+
+    const days = await response.json();
+
+    if (days.length === 0) {
+      slots.textContent = 'この日は空き枠が公開されていません。';
+      return;
+    }
+
+    const day = days[0];
+
+    const toMinutes = (time) => {
+      const [h, m] = time.split(':').map(Number);
+      return h * 60 + m;
+    };
+
+    const start = toMinutes(day.start_time);
+    const end = toMinutes(day.end_time);
+    const duration = 150; // テストメニューの施術時間
+
+    const times = [];
+
+    for (let t = start; t + duration <= end; t += 30) {
+      const h = String(Math.floor(t / 60)).padStart(2, '0');
+      const m = String(t % 60).padStart(2, '0');
+      times.push(`${h}:${m}`);
+    }
+
+    if (times.length === 0) {
+      slots.textContent = 'この日は予約できる時間帯がありません。';
+      return;
+    }
+
+    slots.className = 'slots';
+    slots.innerHTML =
+      '<div style="grid-column:1/-1;font-size:12px;color:#8d7d72">テスト表示：まだ予約は受け付けていません。</div>' +
+      times.map(time => `<div class="slot">${time}</div>`).join('');
+
+  } catch (error) {
+    console.error(error);
+    slots.className = 'empty';
+    slots.textContent = '空き時間の読み込みに失敗しました。';
+  }
+});
 </script>
 </body>
 </html>
