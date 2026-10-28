@@ -142,12 +142,16 @@ try {
   }
 });
 
-const originalRender = render;
 
-render = function() {
-  originalRender();
+const calendarObserver = new MutationObserver(() => {
   loadOpenDays();
-};
+});
+
+calendarObserver.observe(
+  document.getElementById('days'),
+  { childList: true }
+);
+
   
 </script>
 </body>
