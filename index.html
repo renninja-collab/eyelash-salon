@@ -75,7 +75,9 @@ loadMenus();
       const openDay = days.find(d => d.day === date);
 
       if (openDay) {
-        cell.textContent = `${Number(date.slice(-2))} ○`;
+  cell.textContent = `${Number(date.slice(-2))} ○`;
+  cell.style.color = '#493b33';
+  cell.style.fontWeight = 'bold';
       }
     });
   } catch (error) {
