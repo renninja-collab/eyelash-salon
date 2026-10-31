@@ -400,6 +400,26 @@ async function loadBookings() {
         }
         card.append(actions);
       }
+     if (b.status === 'pending' || b.status === 'confirmed') {
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'danger';
+        cancelBtn.textContent = '予約をキャンセル';
+        cancelBtn.style.marginTop = '10px';
+
+        cancelBtn.addEventListener('click', () => runAction(cancelBtn, async () => {
+          if (!confirm(`${b.booking_number} をキャンセルしますか？\nお客様への連絡は別途必要です。`)) return;
+
+          await api('rpc/salon_admin_cancel_booking', {
+            method: 'POST',
+            body: { p_booking_id: b.id }
+          });
+
+          await loadBookings();
+          showMessage('予約をキャンセルしました。お客様へ連絡してください。', 'success');
+        }));
+
+        card.append(cancelBtn);
+     }
       list.append(card);
     }
   } catch(e) {
