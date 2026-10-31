@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>eyelash salon | 空き状況・ご予約（テスト）</title>
+<style>
+:root{--bg:#faf7f2;--paper:#fffdfa;--ink:#493b33;--muted:#8d7d72;--line:#e9e0d7;--accent:#9b7b68}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif;line-height:1.65}main{max-width:520px;margin:0 auto;padding:25px 16px 70px}h1{text-align:center;font:normal 34px Georgia,serif;letter-spacing:.07em;margin:5px 0}.eyebrow{text-align:center;color:var(--accent);font:12px Georgia,serif;letter-spacing:.24em}.subtitle{text-align:center;font-size:12px;color:var(--muted);margin-bottom:20px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:20px;margin:14px 0;box-shadow:0 6px 24px #493b3308}h2{font-size:17px;margin:0 0 12px}.note{font-size:12px;color:var(--muted);margin:8px 0}.alert{font-size:13px;padding:12px;border-radius:12px;background:#f2e9e2;margin:12px 0}.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px}input,select,textarea{width:100%;padding:12px;font-size:16px;color:var(--ink);background:white;border:1px solid var(--line);border-radius:10px;min-height:46px}textarea{min-height:82px}input[type=checkbox]{width:20px;height:20px;min-height:0;accent-color:var(--accent)}button{cursor:pointer;border:0;border-radius:10px;padding:12px 15px;font-size:14px;color:white;background:var(--accent);min-height:44px}button:disabled{opacity:.5;cursor:not-allowed}.month{display:flex;align-items:center;justify-content:space-between;margin:12px 0}.nav{background:white;color:var(--ink);border:1px solid var(--line);font-size:20px}.days,.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;text-align:center}.week{font-size:11px;color:var(--muted);margin:12px 0 6px}.day{background:transparent;color:var(--ink);padding:3px;min-height:43px;aspect-ratio:1;border:1px solid transparent;display:flex;align-items:center;justify-content:center;flex-direction:column}.day small{font-size:10px;color:var(--muted)}.day.selected{background:var(--accent);color:white}.day.selected small{color:white}.day:disabled{color:#c9beb6}.slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.slot{background:#f7f2ed;color:var(--ink);border:1px solid var(--line)}.slot.selected{background:var(--accent);color:white}.muted{color:var(--muted);font-size:13px}.hidden{display:none!important}.status{font-size:13px;padding:12px;border-radius:10px;background:#f0ece7;white-space:pre-wrap}.status.error{color:#9c3833;background:#fff0ed}.status.success{color:#315f3e;background:#e9f4e9}.consent{display:flex;gap:10px;align-items:flex-start;margin:16px 0}.consent label{margin:0;font-weight:400}a{color:var(--accent)}.footer{text-align:center;font-size:11px;color:var(--muted)}
+</style></head><body><main>
+<div class="eyebrow">PRIVATE EYELASH SALON</div><h1>eyelash salon</h1>
+<div class="subtitle">名古屋市港区小賀須 ｜ 空き状況・ご予約</div>
+<div class="alert"><strong>統合ページの動作確認用</strong>：まだ実際のお客様には共有しないでください。申請は管理者の承認後に確定します。自動通知は未設定です。</div>
+<section class="panel"><h2>1. メニューを選択</h2><select id="menu"><option value="">読み込み中...</option></select><div class="note" id="menu-note">所要時間は選択したメニューにより変わります。</div></section>
+<section class="panel"><h2>2. ご希望の日付を選択</h2><div class="month"><button class="nav" id="prev" type="button" aria-label="前月">‹</button><strong id="month"></strong><button class="nav" id="next" type="button" aria-label="翌月">›</button></div>
+<div class="week"><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span></div><div class="days" id="days"></div><p class="note">○：公開中の営業日。予約可能な時間があるかは日付を押して確認してください。</p></section>
+<section class="panel"><h2 id="slot-title">3. ご希望の開始時間を選択</h2><div id="slots" class="muted">メニューと日付を選んでください。</div></section>
+<section class="panel hidden" id="request-panel"><h2>4. お客様情報の入力</h2><p id="summary" class="status"></p>
+<form id="booking-form">
+<label for="customer-name">お名前（必須）</label><input id="customer-name" maxlength="80" autocomplete="name" required>
+<label for="phone">電話番号（必須）</label><input id="phone" inputmode="tel" type="tel" maxlength="20" autocomplete="tel" placeholder="09012345678" required>
+<label for="contact-method">希望する連絡方法</label><select id="contact-method"><option value="instagram">Instagram DM</option><option value="email">メール</option></select>
+<div id="insta-field"><label for="instagram-id">Instagram ID（必須）</label><input id="instagram-id" maxlength="31" placeholder="@account_name"></div>
+<div id="email-field" class="hidden"><label for="contact-email">メールアドレス（必須）</label><input id="contact-email" type="email" maxlength="254" autocomplete="email"></div>
+<label for="off">オフの希望</label><select id="off"><option value="unknown">相談したい・わからない</option><option value="no">オフなし</option><option value="yes">オフあり</option></select>
+<label for="notes">ご要望（任意・500文字以内）</label><textarea id="notes" maxlength="500" placeholder="注意事項や希望があればご記入ください"></textarea>
+<div class="consent"><input id="consent" type="checkbox" required><label for="consent">申請内容がサロンの予約管理に保存され、メールまたはInstagram DMで確認の連絡を受けることに同意します。申請時点では予約は確定しません。</label></div>
+<button id="submit-btn" style="width:100%" type="submit">内容を確認して予約申請</button>
+</form><div id="result" class="status hidden" role="status" aria-live="polite"></div>
+</section>
+<p style="text-align:center;margin:18px 0"><a href="https://www.instagram.com/fu_ka.eyelash.nagoya/" target="_blank" rel="noopener noreferrer" style="display:block;background:var(--accent);color:white;text-decoration:none;padding:14px;border-radius:12px">Instagramを見る</a></p><p class="footer">© eyelash salon ・ 予約は管理者の承認後に確定します。</p>
+</main><script>
+'use strict';
+const SUPABASE_URL='https://jpiyjtwdnqgfjdvmvxgq.supabase.co';
+const SUPABASE_KEY='sb_publishable_0WJdc3bQYjImcdamMrF4aw_T-bOzFAk';
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const today=new Date();today.setHours(0,0,0,0);
+let view=new Date(today.getFullYear(),today.getMonth(),1);
+let openDays=new Set(), menus=[], selectedDay='', selectedTime='', loading=false;
+function jstDay(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
+async function api(path,opts={}){
+ const res=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{
+   method:opts.method||'GET',headers:{apikey:SUPABASE_KEY,...(opts.body?{'Content-Type':'application/json'}:{})},
+   ...(opts.body?{body:JSON.stringify(opts.body)}:{})
+ });
+ const raw=await res.text();let data=null;
+ try{data=raw?JSON.parse(raw):null;}catch{data=raw;}
+ if(!res.ok)throw new Error(typeof data?.message==='string'?data.message:'通信に失敗しました。');
+ return data;
+}
+async function getMenus(){
+ try {menus=await api('salon_menus?select=name,price_yen,duration_minutes&is_active=eq.true&order=display_order.asc');
+ const menu=$('menu');menu.replaceChildren();
+ const placeholder=new Option('メニューを選択してください','');menu.append(placeholder);
+ for(const m of menus){menu.append(new Option(`${m.name}｜${Number(m.price_yen).toLocaleString()}円`,m.name));}
+ }catch(e){$('menu').innerHTML='<option value="">メニューを読み込めませんでした</option>';console.error(e);}
+}
+async function getOpenDays(){
+ try {const rows=await api('salon_open_days?select=day&is_open=eq.true');openDays=new Set(rows.map(x=>x.day));render();}
+ catch(e){console.error(e);$('slots').textContent='営業日を読み込めませんでした。';}
+}
+function render(){
+ $('month').textContent=`${view.getFullYear()}年 ${view.getMonth()+1}月`;
+ const root=$('days');root.replaceChildren();
+ const offset=(new Date(view.getFullYear(),view.getMonth(),1).getDay()+6)%7;
+ for(let i=0;i<offset;i++)root.append(document.createElement('span'));
+ const count=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
+ for(let n=1;n<=count;n++){
+  const d=new Date(view.getFullYear(),view.getMonth(),n),day=jstDay(d);
+  const b=document.createElement('button');b.type='button';b.className='day'+(selectedDay===day?' selected':'');
+  b.disabled=d<today||!openDays.has(day);b.innerHTML=`<span>${n}</span><small>${openDays.has(day)?'○':'・'}</small>`;
+  b.addEventListener('click',()=>pickDay(day));root.append(b);
+ }
+ $('prev').disabled=(view.getFullYear()===today.getFullYear()&&view.getMonth()===today.getMonth());
+}
+function resetSelection(){selectedDay='';selectedTime='';$('request-panel').classList.add('hidden');$('slots').textContent='日付を選んでください。';}
+async function pickDay(day){selectedDay=day;selectedTime='';$('request-panel').classList.add('hidden');render();await loadSlots();}
+async function loadSlots(){
+ if(!selectedDay)return;
+ const menu=$('menu').value,root=$('slots');root.className='muted';root.textContent='空き時間を読み込んでいます...';
+ if(!menu){root.textContent='先にメニューを選択してください。';return;}
+ try{
+ const rows=await api('rpc/salon_available_slots',{method:'POST',body:{p_day:selectedDay,p_menu_name:menu}});
+ const times=rows.map(x=>x.slot_time);root.replaceChildren();
+ if(!times.length){root.textContent='この日は現在空き枠がありません。';return;}
+ root.className='slot-grid';
+ for(const t of times){const b=document.createElement('button');b.type='button';b.className='slot';b.textContent=t;b.addEventListener('click',()=>pickTime(t));root.append(b);}
+ }catch(e){root.className='status error';root.textContent=e.message;}
+}
+function pickTime(t){selectedTime=t;
+ for(const b of $('slots').querySelectorAll('button'))b.classList.toggle('selected',b.textContent===t);
+ const item=menus.find(x=>x.name===$('menu').value);
+ $('summary').textContent=`${selectedDay.replaceAll('-','/')} ${t}開始 ｜ ${item?.name||''} ｜ ${Number(item?.price_yen||0).toLocaleString()}円`;
+ $('request-panel').classList.remove('hidden');$('result').classList.add('hidden');$('request-panel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+$('prev').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);resetSelection();render();});
+$('next').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);resetSelection();render();});
+$('menu').addEventListener('change',()=>{selectedTime='';$('request-panel').classList.add('hidden');if(selectedDay)loadSlots();});
+$('contact-method').addEventListener('change',()=>{
+ const email=$('contact-method').value==='email';$('email-field').classList.toggle('hidden',!email);$('insta-field').classList.toggle('hidden',email);
+ $('contact-email').required=email;$('instagram-id').required=!email;
+});
+$('contact-method').dispatchEvent(new Event('change'));
+$('booking-form').addEventListener('submit',async e=>{
+ e.preventDefault();if(loading||!selectedDay||!selectedTime)return;
+ const chosen=menus.find(x=>x.name===$('menu').value);
+ const method=$('contact-method').value;
+ const data={p_day:selectedDay,p_time:selectedTime,p_menu_name:chosen?.name,
+  p_customer_name:$('customer-name').value.trim(),p_phone:$('phone').value.trim(),
+  p_contact_method:method,p_contact_value:method==='email'?$('contact-email').value.trim():$('instagram-id').value.trim(),
+  p_off_choice:$('off').value,p_notes:$('notes').value.trim()};
+ if(!$('consent').checked||!chosen)return;
+ if(!confirm(`【予約申請の確認】\n${selectedDay} ${selectedTime}\n${chosen.name}\n${data.p_customer_name}様\n※予約確定ではありません。\n\nこの内容で申請しますか？`))return;
+ const result=$('result');result.className='status';result.textContent='申請中...';
+ const btn=$('submit-btn');loading=true;btn.disabled=true;
+ try{const number=await api('rpc/salon_submit_booking',{method:'POST',body:data});
+  result.className='status success';result.textContent=`予約申請を受け付けました。\n受付番号：${number}\n\n現在は仮受付です。サロンからの連絡をお待ちください。\n※統合ページの動作確認用です。`;
+  $('booking-form').classList.add('hidden');loadSlots().catch(console.error);
+ }catch(err){result.className='status error';result.textContent=`申請できませんでした：${err.message}\n空き枠を再確認してください。`;}
+ finally{loading=false;btn.disabled=false;}
+});
+(async()=>{await Promise.all([getMenus(),getOpenDays()]);render();})();
+</script></body></html>
